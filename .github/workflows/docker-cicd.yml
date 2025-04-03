@@ -1,0 +1,31 @@
+name: Docker CI/CD Pipeline # Назва нашого workflow, що відображатиметься в GitHub Actions
+
+on: # Події, які запускають workflow
+  push: # Запускати при push-подіях
+    branches: [ main ] # Тільки якщо push відбувається в гілку 'main'
+  # Можна додати pull_request для запуску при створенні Pull Request
+  # pull_request:
+  #   branches: [ main ] 
+
+jobs: # Список завдань, які виконуються паралельно (якщо їх кілька) або послідовно
+  build: # Назва нашого першого завдання - "збірка"
+    name: Build Docker Image # Більш описова назва завдання
+    runs-on: ubuntu-latest # Тип віртуальної машини, де виконуватиметься завдання
+
+    steps: # Послідовність кроків у завданні 'build'
+      - name: Checkout code # Крок 1: Завантаження коду репозиторію
+        uses: actions/checkout@v4 # Використання стандартної дії для отримання коду
+
+      - name: Set up Docker Buildx # Крок 2: Налаштування Docker Buildx (оптимізований інструмент для збірки)
+        uses: docker/setup-buildx-action@v3 
+
+      - name: Build Docker image # Крок 3: Збірка Docker образу
+        uses: docker/build-push-action@v5 # Використання дії для збірки (і в майбутньому публікації) образу
+        with: # Параметри для дії 'docker/build-push-action'
+          context: . # Вказує, де знаходиться Dockerfile і код (у корені репозиторію)
+          file: ./Dockerfile # Явний шлях до Dockerfile
+          push: false # Поки що НЕ публікуємо образ (тільки збираємо)
+          tags: ${{ github.repository_owner }}/${{ github.event.repository.name }}:latest # Як назвати (тегувати) образ. Використовуємо логін власника/назву репо:latest
+          # Приклад тегу: my-github-user/simple-flask-cicd:latest
+          # ${{ github.repository_owner }} - це змінна GitHub Actions, яка автоматично підставить ваш логін
+          # ${{ github.event.repository.name }} - це змінна, яка підставить назву репозиторію
