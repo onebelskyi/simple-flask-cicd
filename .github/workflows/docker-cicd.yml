@@ -18,12 +18,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: false
+          push: true # Змінюємо на true для публікації образу
           tags: ${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
 
       - name: Run tests
