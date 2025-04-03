@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write # Додаємо дозвіл на запис у репозиторій
+
 jobs:
   build:
     name: Build Docker Image
